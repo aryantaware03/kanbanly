@@ -3,7 +3,7 @@
 A clear, local-first kanban board for a calmer week. Capture the work, choose
 what matters, and drag it forward. Four columns, honest priorities, no ceremony.
 
-**Live app:** _added after deployment_
+**Live app:** <https://kanbanly-pearl.vercel.app>
 
 ## Features
 
