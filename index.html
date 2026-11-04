@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbanly — a clear board for a calmer week</title>
+    <meta
+      name="description"
+      content="A local-first kanban board with drag and drop, priorities, due dates, tags and JSON backup. No account required."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230f766e'/><text x='32' y='45' font-size='30' text-anchor='middle'>▦</text></svg>"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Kanbanly home">
+        <span class="brand-mark" aria-hidden="true">▦</span>
+        <span>Kanbanly</span>
+      </a>
+      <div class="topbar-actions">
+        <button class="ghost" id="export-json" type="button">Back up</button>
+        <button class="ghost" id="import-json" type="button">Restore</button>
+        <button
+          class="icon-button"
+          id="theme-toggle"
+          type="button"
+          aria-label="Toggle dark mode"
+        >
+          ◐
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Kanban · local-first</p>
+          <h1>A clear board for<br />a calmer week.</h1>
+          <p class="lede">
+            Capture the work, choose what matters, and drag it forward. Four
+            columns, honest priorities, no ceremony.
+          </p>
+        </div>
+        <button class="button hero-button" id="new-task" type="button">
+          + New task
+        </button>
+      </section>
+
+      <section class="stats" aria-label="Board summary">
+        <article class="stat">
+          <p class="stat-label">Total tasks</p>
+          <p class="stat-value" id="stat-total">0</p>
+          <p class="stat-note">Everything on the board</p>
+        </article>
+        <article class="stat">
+          <p class="stat-label">In progress</p>
+          <p class="stat-value" id="stat-doing">0</p>
+          <p class="stat-note">Keep it moving</p>
+        </article>
+        <article class="stat">
+          <p class="stat-label">Done</p>
+          <p class="stat-value" id="stat-done">0</p>
+          <p class="stat-note">Small wins count</p>
+        </article>
+        <article class="stat">
+          <p class="stat-label">Overdue</p>
+          <p class="stat-value" id="stat-overdue">0</p>
+          <p class="stat-note">Open and past due</p>
+        </article>
+      </section>
+
+      <section class="panel toolbar" id="toolbar">
+        <div class="toolbar-row">
+          <label class="search-field">
+            <span class="sr-only">Search tasks</span>
+            <input
+              id="search"
+              type="search"
+              placeholder="Search title, notes or tags…"
+              autocomplete="off"
+            />
+          </label>
+          <label class="select-field">
+            <span class="sr-only">Filter by priority</span>
+            <select id="priority-filter"></select>
+          </label>
+          <button class="ghost" id="clear-filters" type="button" hidden>
+            Clear filters
+          </button>
+        </div>
+        <p class="filter-summary" id="filter-summary"></p>
+      </section>
+
+      <section class="empty-state" id="board-empty">
+        <span class="empty-mark" aria-hidden="true">🗂️</span>
+        <h2>A clear board, ready when you are.</h2>
+        <p>
+          Add the work you are carrying, then move one card to
+          <strong>In progress</strong>. Starter tasks are here if you want to
+          see the flow first.
+        </p>
+        <div class="empty-actions">
+          <button class="button" id="starter-tasks" type="button">
+            Add starter tasks
+          </button>
+          <button class="ghost" id="new-task-empty" type="button">
+            Create a blank task
+          </button>
+        </div>
+      </section>
+
+      <div class="board" id="board" aria-label="Kanban board"></div>
+    </main>
+
+    <footer>
+      <p>
+        Kanbanly keeps the board in this browser. No account, no server, no
+        tracking.
+      </p>
+      <p>
+        <a href="https://github.com/aryantaware03/kanbanly">Source on GitHub</a>
+      </p>
+    </footer>
+
+    <dialog id="task-dialog" aria-labelledby="task-dialog-title">
+      <form class="stack" id="task-form" novalidate>
+        <div>
+          <p class="dialog-kicker" id="task-dialog-kicker">New task</p>
+          <h2 id="task-dialog-title">New task</h2>
+        </div>
+        <label class="field">
+          <span>Title</span>
+          <input id="task-title" type="text" maxlength="120" required />
+        </label>
+        <label class="field">
+          <span>Notes</span>
+          <textarea id="task-notes" rows="3" maxlength="500"></textarea>
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Column</span>
+            <select id="task-status"></select>
+          </label>
+          <label class="field">
+            <span>Priority</span>
+            <select id="task-priority"></select>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span>Due date</span>
+            <input id="task-due" type="date" />
+          </label>
+          <label class="field">
+            <span>Tags</span>
+            <input
+              id="task-tags"
+              type="text"
+              placeholder="api, ui, quick-win"
+              autocomplete="off"
+            />
+          </label>
+        </div>
+        <div class="dialog-actions">
+          <button class="ghost" id="task-cancel" type="button">Cancel</button>
+          <button class="button" type="submit">Save task</button>
+        </div>
+      </form>
+    </dialog>
+
+    <input type="file" id="import-file" accept="application/json,.json" hidden />
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

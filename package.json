@@ -1,0 +1,20 @@
+{
+  "name": "kanbanly",
+  "version": "1.0.0",
+  "description": "A local-first kanban board with drag and drop, priorities, due dates, tags and JSON backup.",
+  "type": "module",
+  "main": "logic.js",
+  "scripts": {
+    "start": "node serve.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "kanban",
+    "tasks",
+    "productivity",
+    "drag-and-drop",
+    "local-first"
+  ],
+  "license": "MIT",
+  "private": false
+}
